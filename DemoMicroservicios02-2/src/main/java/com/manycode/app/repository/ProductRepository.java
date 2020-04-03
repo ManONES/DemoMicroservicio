@@ -10,7 +10,7 @@ import com.manycode.app.entity.Product;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
-	public List<Product> findByCategory (Category category);
+	public List<Product> findByCategory(Category category);
 }
 
 
