@@ -25,8 +25,8 @@ public class ProductRepositoryMockTest {
 				.name("computer")
 				.category(Category.builder().id(1L).build())
 				.description("")
-				.stock(Double.parseDouble(s:"10"))
-				.price(Double.parseDouble(s:"1240.99"))
+				.stock(Double.parseDouble("10"))
+				.price(Double.parseDouble("1240.99"))
 				.status("Create")
 				.createdAt(new Date()).build();
 		productRepository.save(product01);
