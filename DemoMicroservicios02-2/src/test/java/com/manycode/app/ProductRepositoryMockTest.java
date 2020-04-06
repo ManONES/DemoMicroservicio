@@ -28,7 +28,7 @@ public class ProductRepositoryMockTest {
 				.stock(Double.parseDouble("10"))
 				.price(Double.parseDouble("1240.99"))
 				.status("Create")
-				.createdAt(new Date()).build();
+				.createAt(new Date()).build();
 		productRepository.save(product01);
 		
 		List<Product> founds = productRepository.findByCategory(product01.getCategory());
