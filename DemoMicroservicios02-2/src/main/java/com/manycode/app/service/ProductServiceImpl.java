@@ -4,15 +4,19 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.manycode.app.entity.Category;
 import com.manycode.app.entity.Product;
 import com.manycode.app.repository.ProductRepository;
 
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService{
 
-	@Autowired
-	private ProductRepository productRepository;
+	private final ProductRepository productRepository;
 	
 	@Override
 	public List<Product> listAllProduct() {
@@ -41,10 +45,10 @@ public class ProductServiceImpl implements ProductService{
 		if (null == productDB) {
 			return null;
 		}
-		productDB.setName(product.getName())
+		productDB.setName(product.getName());
 		productDB.setDescription(product.getDescription());
 		productDB.setCategory(product.getCategory());
-		productDB.setPrice(product.getPice());
+		productDB.setPrice(product.getPrice());
 		return productRepository.save(productDB);
 	}
 
