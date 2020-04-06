@@ -1,6 +1,8 @@
 package com.manycode.app.entity;
 
 import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.manycode.app.entity.Category;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -42,7 +44,7 @@ public class Product {
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "category_id")
-	
+	@JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
 	private Category category;
 
 }
