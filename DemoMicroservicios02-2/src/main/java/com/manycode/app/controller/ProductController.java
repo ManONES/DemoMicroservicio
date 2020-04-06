@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -52,5 +53,10 @@ public class ProductController {
 		return ResponseEntity.ok(product);
 	}
 	
+	@PostMapping
+	public ResponseEntity<Product> createProduct(@RequestBody Product product){
+		Product productCreate = productService.createProduct(product);
+		return ResponseEntity.status(HttpStatus.CREATED).body(productCreate);
+	}
 	
 }
