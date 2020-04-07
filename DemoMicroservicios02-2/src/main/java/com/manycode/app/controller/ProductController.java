@@ -1,11 +1,18 @@
 package com.manycode.app.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,7 +20,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.manycode.app.entity.Category;
 import com.manycode.app.entity.Product;
 import com.manycode.app.service.ProductService;
@@ -56,7 +66,10 @@ public class ProductController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<Product> createProduct(@RequestBody Product product){
+	public ResponseEntity<Product> createProduct(@Valid @RequestBody Product product, BindingResult result){
+		if (result.hasErrors()) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, this.formatMessage(result));
+		}
 		Product productCreate = productService.createProduct(product);
 		return ResponseEntity.status(HttpStatus.CREATED).body(productCreate);
 	}
@@ -71,5 +84,50 @@ public class ProductController {
 		return ResponseEntity.ok(product);
 	}
 	
+
+	@DeleteMapping(value =  "/{id}")
+	public ResponseEntity<Product> deleteProduct(@PathVariable("id") Long id) {
+		Product productDelete = productService.deleteProduct(id);
+		if (null==productDelete) {
+			return ResponseEntity.notFound().build();
+		}		
+
+		return ResponseEntity.ok(productDelete);
+	}
+		
+	@GetMapping(value = "/{id}/stock")
+	public ResponseEntity<Product> updateStockProduct(@PathVariable Long id, @RequestParam(name = "quantity",required = true) Double quantity){
+		Product product = productService.updateStock(id,quantity);
+		if (null==product) {
+			return ResponseEntity.notFound().build();
+		}		
+
+		
+		return ResponseEntity.ok(product);		
+	}
+	
+	private String formatMessage(BindingResult result) {
+		List<Map<String,String>> errors = result.getFieldErrors().stream()
+				.map(err ->{
+					Map<String,String> error = new HashMap<>();
+					error.put(err.getField(), err.getDefaultMessage());
+					return error;
+					
+				}).collect(Collectors.toList());
+		ErrorMensaje errorMensaje = ErrorMensaje.builder()
+				.code("01")
+				.messages(errors).build();
+		
+		ObjectMapper mapper = new ObjectMapper();
+		String jsonString= "";
+		try {
+			jsonString = mapper.writeValueAsString(errorMensaje);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		
+		return jsonString;
+				
+	}
 	
 }
